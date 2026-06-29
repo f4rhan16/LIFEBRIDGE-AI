@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LifeBridge AI - Emergency & Disaster Assistant</title>
+  <meta name="description" content="Premium AI-powered disaster helper dashboard with safe route planning, offline SMS coordinator, CPR pacing metronome, and live supply estimation.">
+  
+  <!-- Fonts & CDN styles -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- System Emergency Screen Overlay for Alarms -->
+  <div id="alarm-overlay" class="alarm-overlay hidden">
+    <div class="alarm-content">
+      <i data-lucide="alert-octagon" class="alarm-icon"></i>
+      <h2>CRITICAL WARNING</h2>
+      <p id="alarm-text">Danger threshold exceeded! Seek shelter immediately.</p>
+      <button id="dismiss-alarm-btn" class="secondary-btn">Dismiss Warning</button>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Main Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-glow"></div>
+        <i data-lucide="shield-alert" class="brand-icon"></i>
+        <h1>LifeBridge AI</h1>
+        <span class="badge">Agents for Good</span>
+      </div>
+      
+      <!-- Scenario dropdown & Connectivity controllers -->
+      <div class="header-controls">
+        <div class="scenario-selector-wrapper">
+          <label for="scenario-select"><i data-lucide="activity"></i> Active Crisis:</label>
+          <select id="scenario-select" class="dropdown-select">
+            <option value="mumbai_flood">Mumbai Monsoon Floods</option>
+            <option value="uttarakhand_earthquake">Uttarakhand Seismic Tremors</option>
+            <option value="odisha_cyclone">Odisha Coast Super Cyclone</option>
+            <option value="delhi_accident">Delhi NCR Fog Pile-up</option>
+          </select>
+        </div>
+
+        <div class="network-toggle-wrapper">
+          <span class="network-label"><i data-lucide="wifi"></i> Network Status:</span>
+          <label class="switch">
+            <input type="checkbox" id="network-status-checkbox" checked>
+            <span class="slider round"></span>
+          </label>
+          <span id="network-status-text" class="status-online">Online</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Layout Grid -->
+    <main class="dashboard-grid">
+      
+      <!-- LEFT COLUMN: Sensors, Supplies, Checklist -->
+      <section class="grid-column left-col">
+        
+        <!-- Environmental Sensors Gauge Panel -->
+        <div class="card glass-card scroll-card" id="sensor-card">
+          <div class="card-header">
+            <i data-lucide="gauge"></i>
+            <h2>Environmental Risk Telemetry</h2>
+          </div>
+          <div class="card-body">
+            <div class="gauges-container">
+              <!-- Rainfall Gauge -->
+              <div class="gauge-group">
+                <div class="gauge-meta">
+                  <span>Rainfall Accumulation</span>
+                  <span id="rain-val" class="gauge-value text-blue">0 mm/h</span>
+                </div>
+                <input type="range" id="rain-slider" class="gauge-slider" min="0" max="200" value="0">
+              </div>
+              
+              <!-- Wind Speed Gauge -->
+              <div class="gauge-group">
+                <div class="gauge-meta">
+                  <span>Wind Velocity</span>
+                  <span id="wind-val" class="gauge-value text-orange">0 km/h</span>
+                </div>
+                <input type="range" id="wind-slider" class="gauge-slider" min="0" max="300" value="0">
+              </div>
+
+              <!-- Seismic Gauge -->
+              <div class="gauge-group">
+                <div class="gauge-meta">
+                  <span>Seismic Rupture</span>
+                  <span id="seismic-val" class="gauge-value text-red">0.0 Richter</span>
+                </div>
+                <input type="range" id="seismic-slider" class="gauge-slider" min="0" max="9.0" step="0.1" value="0">
+              </div>
+            </div>
+            <p class="card-caption">Slide values to simulate varying threat levels. Exceeding thresholds triggers visual alerts.</p>
+          </div>
+        </div>
+
+        <!-- Supply Calculator Panel -->
+        <div class="card glass-card" id="calculator-card">
+          <div class="card-header">
+            <i data-lucide="calculator"></i>
+            <h2>Emergency Supply Estimator</h2>
+          </div>
+          <div class="card-body">
+            <div class="calc-inputs">
+              <div class="input-group">
+                <label for="calc-people"><i data-lucide="users"></i> Family Size</label>
+                <input type="number" id="calc-people" min="1" max="15" value="4">
+              </div>
+              <div class="input-group">
+                <label for="calc-days"><i data-lucide="calendar"></i> Days Isolated</label>
+                <input type="number" id="calc-days" min="1" max="30" value="3">
+              </div>
+            </div>
+
+            <div class="calc-results">
+              <div class="result-item">
+                <i data-lucide="droplet" class="text-blue"></i>
+                <div class="result-details">
+                  <span class="result-label">Clean Water</span>
+                  <span id="calc-water" class="result-value">12 Litres</span>
+                </div>
+              </div>
+              <div class="result-item">
+                <i data-lucide="beef" class="text-orange"></i>
+                <div class="result-details">
+                  <span class="result-label">Dry Rations (Poha/Chana)</span>
+                  <span id="calc-food" class="result-value">24,000 kcal</span>
+                </div>
+              </div>
+              <div class="result-item">
+                <i data-lucide="battery-charging" class="text-green"></i>
+                <div class="result-details">
+                  <span class="result-label">Device Charge Capacity</span>
+                  <span id="calc-power" class="result-value">2 Powerbanks</span>
+                </div>
+              </div>
+              <div class="result-item">
+                <i data-lucide="first-aid" class="text-red"></i>
+                <div class="result-details">
+                  <span class="result-label">First Aid Bandages</span>
+                  <span id="calc-medical" class="result-value">1 Advanced Kit</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Survival Checklist Panel -->
+        <div class="card glass-card scroll-card" id="checklist-card">
+          <div class="card-header">
+            <i data-lucide="check-square"></i>
+            <h2>Interactive Crisis Checklist</h2>
+            <span id="checklist-progress" class="checklist-badge">0/0</span>
+          </div>
+          <div class="card-body">
+            <div id="checklist-items" class="checklist-list">
+              <!-- Dynamically populated checklist -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CENTER COLUMN: Interactive Leaflet Map and Offline directory / SMS coordinator -->
+      <section class="grid-column center-col">
+        <!-- Panic Emergency SOS Button -->
+        <div class="panic-banner">
+          <button id="panic-sos-btn" class="sos-panic-button">
+            <span class="sos-text">SOS</span>
+            <span class="sos-pulse"></span>
+          </button>
+          <div class="panic-desc">
+            <h3>Panic Broadcast Trigger</h3>
+            <p>Broadcast your current coordinates to search responders and add a map alert marker.</p>
+          </div>
+        </div>
+
+        <!-- Central Display Container -->
+        <div class="map-view-container">
+          <!-- Active Leaflet Map -->
+          <div id="map" class="active-map"></div>
+
+          <!-- Offline Layout Backdrop (Hidden by default, displayed during simulated offline state) -->
+          <div id="offline-fallback-overlay" class="offline-overlay hidden">
+            <div class="offline-header">
+              <i data-lucide="wifi-off" class="text-red animate-pulse"></i>
+              <h2>Offline Safe Hub Directory</h2>
+              <p>Network offline. Displaying cached local safety centers and peer coordinates.</p>
+            </div>
+            
+            <div class="offline-body">
+              <!-- Cached Shelter Directory -->
+              <div class="offline-directory">
+                <h3><i data-lucide="home"></i> Cached Shelters</h3>
+                <div id="offline-shelters-list" class="cached-list">
+                  <!-- Dynamically populated when offline -->
+                </div>
+              </div>
+
+              <!-- SMS SOS Encoder tool -->
+              <div class="offline-sms-generator">
+                <h3><i data-lucide="message-square"></i> Emergency SMS Synthesizer</h3>
+                <p class="sms-desc">Generate low-bandwidth coded status strings that can bypass cellular congestions over basic 2G SMS networks.</p>
+                
+                <div class="sms-status-inputs">
+                  <label for="sms-status-condition">Status:</label>
+                  <select id="sms-status-condition" class="dropdown-select small-select">
+                    <option value="OK">Safe - Static</option>
+                    <option value="MED">Need Medical Assistance</option>
+                    <option value="SHEL">Need Shelter / Evac Route</option>
+                    <option value="TRAP">Trap Hazard / Debris Blocked</option>
+                  </select>
+                </div>
+                
+                <div class="sms-output-box">
+                  <textarea id="sms-generated-text" readonly class="sms-textarea"></textarea>
+                  <button id="copy-sms-btn" class="primary-btn"><i data-lucide="copy"></i> Copy SMS Message</button>
+                </div>
+                <div id="sms-feedback" class="copy-success-text hidden">SMS text copied to clipboard! Send to emergency number 112.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Community SOS alerts & Reports -->
+        <div class="card glass-card community-reports-card">
+          <div class="card-header">
+            <i data-lucide="megaphone"></i>
+            <h2>Live Crowd-Sourced Safety Alerts</h2>
+          </div>
+          <div class="card-body feed-layout">
+            <div class="feed-list" id="report-feed-list">
+              <!-- Dynamically populated community updates -->
+            </div>
+            
+            <div class="feed-form-wrapper">
+              <h3>Report Local Hazard</h3>
+              <form id="hazard-report-form" class="hazard-form">
+                <input type="text" id="report-title" placeholder="e.g. Broken Bridge, Water Pooling" required class="form-input">
+                <textarea id="report-desc" placeholder="Details of hazard or safety recommendation..." required class="form-textarea"></textarea>
+                <div class="form-row">
+                  <select id="report-severity" class="dropdown-select small-select">
+                    <option value="warning">Warning (Medium)</option>
+                    <option value="critical">Critical (High Danger)</option>
+                  </select>
+                  <button type="submit" class="primary-btn shrink-btn"><i data-lucide="send"></i> Post Alert</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: AI Agent & First-Aid and Family Safety -->
+      <section class="grid-column right-col">
+        
+        <!-- LifeBridge Emergency AI Chatbot -->
+        <div class="card glass-card chat-card" id="chat-card">
+          <div class="card-header">
+            <div class="ai-status">
+              <span class="pulse-green"></span>
+              <i data-lucide="cpu" class="text-cyan"></i>
+              <h2>LifeBridge AI Agent</h2>
+            </div>
+            <button id="clear-chat-btn" class="icon-btn-text" title="Reset Chat"><i data-lucide="rotate-ccw"></i></button>
+          </div>
+          <div class="card-body chat-body" id="chat-messages">
+            <!-- Chat history dynamically populated -->
+          </div>
+          <div class="quick-replies" id="quick-reply-chips">
+            <!-- Dynamic quick reply buttons -->
+          </div>
+          <div class="chat-footer">
+            <input type="text" id="chat-input" placeholder="Type a message or disaster query..." class="chat-text-input">
+            <button id="send-chat-btn" class="chat-send-btn"><i data-lucide="send"></i></button>
+          </div>
+        </div>
+
+        <!-- First Aid Guides & CPR Pacing Metronome -->
+        <div class="card glass-card" id="firstaid-card">
+          <div class="card-header">
+            <i data-lucide="heart-pulse"></i>
+            <h2>Interactive First Aid Desk</h2>
+          </div>
+          <div class="card-body">
+            <div class="firstaid-selectors">
+              <button class="tab-btn active" data-guide="cpr">CPR</button>
+              <button class="tab-btn" data-guide="bleeding">Bleeding</button>
+              <button class="tab-btn" data-guide="choking">Choking</button>
+              <button class="tab-btn" data-guide="fracture">Fracture</button>
+            </div>
+            
+            <div id="firstaid-content" class="firstaid-content-area">
+              <!-- Dynamically populated -->
+            </div>
+
+            <!-- CPR METRONOME COMPONENT (Only renders active options for CPR) -->
+            <div id="metronome-wrapper" class="metronome-box">
+              <div class="metronome-header">
+                <i data-lucide="radio" class="metronome-icon-glow"></i>
+                <span>CPR Compression Pacer (105 BPM)</span>
+              </div>
+              <div class="metronome-controls">
+                <button id="metronome-toggle-btn" class="metronome-btn">Start Pacer</button>
+                <div id="metronome-visual-indicator" class="metronome-light"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Family Safety Coordinator -->
+        <div class="card glass-card" id="family-card">
+          <div class="card-header">
+            <i data-lucide="users"></i>
+            <h2>Family Safety Board</h2>
+          </div>
+          <div class="card-body">
+            <div class="family-list" id="family-member-list">
+              <!-- Populated dynamically with family statuses -->
+            </div>
+            <div class="family-update-section">
+              <button id="family-status-safe-btn" class="status-btn safe-btn"><i data-lucide="check-circle-2"></i> Report Myself Safe</button>
+              <button id="family-status-danger-btn" class="status-btn danger-btn"><i data-lucide="alert-triangle"></i> Report Alert Status</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer Status Banner -->
+    <footer class="app-footer">
+      <div class="footer-links">
+        <span><strong>National Emergency Helpline:</strong> 112</span>
+        <span><strong>NDMA Control Desk:</strong> +91 (11) 26701728 / 1078</span>
+        <span><strong>NDRF Control:</strong> +91 9711077372</span>
+      </div>
+      <div class="footer-copy">
+        <i data-lucide="shield-check"></i>
+        <span>LifeBridge AI. Built for Agents for Good track. Secure local cache active.</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Load Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
