@@ -1,4 +1,4 @@
-# LifeBridge AI 🌐🚨
+# LifeBridge AI 
 > **Emergency & Disaster Assistant for Indian Crisis Scenarios**  
 > *A resilient, low-bandwidth, AI-assisted dashboard designed to aid citizens and search-and-rescue teams during critical disasters.*
 
@@ -20,7 +20,7 @@ When network connectivity goes down, the app shifts into a resilient local-cache
 
 ---
 
-## 🔄 Resilient Workflows
+##  Resilient Workflows
 
 Here is how LifeBridge AI operates to guarantee safety and resource coordination under varying network conditions and environmental threats:
 
@@ -70,20 +70,20 @@ graph TD
 
 ---
 
-## ⚡ Core Features
+##  Core Features
 
-- **📍 Interactive Leaflet Maps (CartoDB Dark Tiles)**: Visualizes coordinates of active shelters (color-coded by remaining bed capacities), active road blockages or chemical spills, and neon-green blinking safe evacuation corridors.
-- **🌡️ Risk Telemetry Sensors**: Dynamic sliders to simulate Rainfall, Wind, and Seismic shifts. Automatically triggers alarms and siren noises if values exceed safe limits.
-- **✉️ SMS Status Synthesizer**: Resilient low-bandwidth communication protocol. Encodes user's status (`OK`, `MED` for medical help, `SHEL` for shelter needed, `TRAP` for trap hazard) and location coordinates into a 2G SMS compatible string to copy-paste.
-- **🔊 CPR Metronome (105 BPM)**: An audio-visual pacing metronome producing high-pitch sound frequencies and visual pulses to assist users in maintaining a steady 100-120 compressions/minute rate during emergency CPR procedures.
-- **🤖 LifeBridge AI Agent**: A lightweight keyword-matching chatbot that analyzes disaster-related queries and provides instant access to shelter guides, utility shutdown protocols, and first-aid help.
-- **📝 Interactive Disaster Checklist**: Populates standard disaster preparation checklists matching the active crisis type (Monsoon Floods, Earthquake, Cyclone, Road Accident) to help users pack efficiently.
-- **👥 Family Safety board**: Allows users to check in on their family members' locations, update their own status, and place an automatic custom locator pin on the map.
-- **📣 Crowd Alert reporting**: Allows citizens to submit custom warnings (road blocks, power failures) with description and severity, instantly adding them to the map and community feed.
+- ** Interactive Leaflet Maps (CartoDB Dark Tiles)**: Visualizes coordinates of active shelters (color-coded by remaining bed capacities), active road blockages or chemical spills, and neon-green blinking safe evacuation corridors.
+- ** Risk Telemetry Sensors**: Dynamic sliders to simulate Rainfall, Wind, and Seismic shifts. Automatically triggers alarms and siren noises if values exceed safe limits.
+- ** SMS Status Synthesizer**: Resilient low-bandwidth communication protocol. Encodes user's status (`OK`, `MED` for medical help, `SHEL` for shelter needed, `TRAP` for trap hazard) and location coordinates into a 2G SMS compatible string to copy-paste.
+- ** CPR Metronome (105 BPM)**: An audio-visual pacing metronome producing high-pitch sound frequencies and visual pulses to assist users in maintaining a steady 100-120 compressions/minute rate during emergency CPR procedures.
+- ** LifeBridge AI Agent**: A lightweight keyword-matching chatbot that analyzes disaster-related queries and provides instant access to shelter guides, utility shutdown protocols, and first-aid help.
+- ** Interactive Disaster Checklist**: Populates standard disaster preparation checklists matching the active crisis type (Monsoon Floods, Earthquake, Cyclone, Road Accident) to help users pack efficiently.
+- ** Family Safety board**: Allows users to check in on their family members' locations, update their own status, and place an automatic custom locator pin on the map.
+- ** Crowd Alert reporting**: Allows citizens to submit custom warnings (road blocks, power failures) with description and severity, instantly adding them to the map and community feed.
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Frontend Structure**: HTML5 (semantic elements)
 - **Styling system**: Vanilla CSS (glassmorphism cards, custom sliders, blinking animations, red warning pulses, responsive grid layout)
@@ -92,7 +92,7 @@ graph TD
 
 ---
 
-## 🚀 Local Run Guide
+##  Local Run Guide
 
 1. Clone this repository:
    ```bash
@@ -117,7 +117,7 @@ graph TD
 
 ---
 
-## 📂 Code Repository Structure
+##  Code Repository Structure
 
 - `index.html` - The main dashboard container incorporating telemetry, chat components, metronome wrappers, and layout sections.
 - `styles.css` - Custom styling theme, glassmorphic panel layouts, gauges, alarm overlays, and animation routines.
